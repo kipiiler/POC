@@ -2,5 +2,19 @@
 	"$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
 	"name": "poc",
 	"version": "0.0.0",
-	"dependencies": []
+	"dependencies": [
+        "glfw3",
+        "glad",
+        "glm",
+        "stb",
+        "nlohmann-json",
+        {
+			"name": "imgui",
+			"features": [
+				"docking-experimental",
+				"glfw-binding",
+				"opengl3-binding"
+			]
+		}     
+    ]
 }
