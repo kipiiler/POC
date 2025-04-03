@@ -4,6 +4,8 @@
 
 #include <iostream>
 
+#include "Shader.hpp"
+
 
 class Renderer {
 private:
@@ -46,17 +48,28 @@ private:
 
 
     void run() {
+
+        Shader shader("C:/Users/nguye/Desktop/Random/POC/src/shaders/simple.vs", "C:/Users/nguye/Desktop/Random/POC/src/shaders/simple.fs");
+
+        
         // Main loop
         while (!glfwWindowShouldClose(window)) {
             // Render here
+            
+            glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set clear color to black
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the color buffer
+            
+            shader.use(); // Use the shader program
+            render();
 
-            // Swap front and back buffers
-            glfwSwapBuffers(window);
-
-            // Clear the screen
-            // Poll for and process events
-            glfwPollEvents();
+            glfwSwapBuffers(window); // Swap front and back buffers
+            glfwPollEvents(); // Poll for and process events
         }
+    }
+
+    void render() {
+        // Render the triangle
+        renderTriangle();
     }
 
 
