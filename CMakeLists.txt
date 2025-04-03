@@ -9,8 +9,10 @@ add_executable(POC src/main.cpp)
 
 find_package(glfw3 CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
 
 target_link_libraries(POC PRIVATE
     glfw
     glad::glad
+    glm::glm
 )

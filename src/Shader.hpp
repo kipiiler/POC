@@ -7,7 +7,7 @@
 #include <iostream>
 
 class Shader {
-private:
+public:
     GLuint shaderProgram;
 
 public:
