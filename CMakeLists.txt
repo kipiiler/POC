@@ -5,7 +5,7 @@ project(POC VERSION 1.0)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-add_executable(POC src/main.cpp)
+add_executable(POC src/main.cpp src/Square.cpp)
 
 find_package(glfw3 CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)

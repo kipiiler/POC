@@ -95,7 +95,7 @@ public:
     }
     
     // Use/activate the shader
-    void use() {
+    void Use() {
         glUseProgram(shaderProgram);
     }
     

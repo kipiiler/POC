@@ -1,57 +1,67 @@
 #pragma once
+#include "Shader.hpp"
 #include <glad/glad.h>
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/ext/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <memory>
 
 class Square {
 public:
   Square() {
-    float vertices[] = {
-      -1.0f, -1.0f, 1.0f,
-      -1.0f, 1.0f, 1.0f,
-      1.0f, 1.0f, 1.0f,
-      1.0f, -1.0f, 1.0f};
-    unsigned int indices[] = {0, 1, 2, 0, 2, 3};
+    if (!s_shader) {
+      s_shader = std::make_shared<Shader>("./src/shaders/simple.vert",
+                                          "./src/shaders/simple.frag");
+      s_modelMatLoc =
+          glGetUniformLocation(s_shader->shaderProgram, "uModelMat");
+      s_colorLoc = glGetUniformLocation(s_shader->shaderProgram, "uCol");
 
-    // Generate and bind a Vertex Array Object (VAO)
-    glGenVertexArrays(1, &m_vao);
-    glBindVertexArray(m_vao);
+      float vertices[] = {-1.0f, -1.0f, 1.0f, -1.0f, 1.0f,  1.0f,
+                          1.0f,  1.0f,  1.0f, 1.0f,  -1.0f, 1.0f};
+      unsigned int indices[] = {0, 1, 2, 0, 2, 3};
 
-    // Generate and bind a Vertex Buffer Object (VBO)
-    glGenBuffers(1, &m_vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+      // Generate and bind a Vertex Array Object (VAO)
+      glGenVertexArrays(1, &m_vao);
+      glBindVertexArray(m_vao);
 
-    glGenBuffers(1, &m_ebo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,
-                 GL_STATIC_DRAW);
+      // Generate and bind a Vertex Buffer Object (VBO)
+      glGenBuffers(1, &m_vbo);
+      glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+      glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    // Define vertex attributes
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
-                          (void *)0);
-    glEnableVertexAttribArray(0);
+      glGenBuffers(1, &m_ebo);
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
+      glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,
+                   GL_STATIC_DRAW);
 
-    // Unbind the VBO and VAO
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+      // Define vertex attributes
+      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
+                            (void *)0);
+      glEnableVertexAttribArray(0);
+
+      // Unbind the VBO and VAO
+      glBindBuffer(GL_ARRAY_BUFFER, 0);
+      glBindVertexArray(0);
+    }
   }
 
   ~Square() {}
 
   [[nodiscard]] GLuint GetVAO() const { return m_vao; }
 
-  void Bind() {
+  void Bind() const {
     glBindVertexArray(m_vao);
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
   }
 
-  void Unbind() {
+  void Unbind() const {
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   }
+
+  void SetColor(const glm::vec3 &color) { m_color = color; }
 
   void Rotate(float rad) {
     m_rotate = glm::rotate(m_rotate, -rad, {0.0f, 0.0f, 1.0f});
@@ -67,9 +77,27 @@ public:
     return m_translate * m_rotate * m_scale;
   }
 
+  void Render() const {
+    s_shader->Use();
+    Bind();
+    glUniformMatrix4fv(s_modelMatLoc, 1, GL_FALSE,
+                       glm::value_ptr(GetModelMatrix()));
+    glUniform3fv(s_colorLoc, 1, glm::value_ptr(m_color));
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    Unbind();
+  }
+
 private:
-  GLuint m_vao, m_vbo, m_ebo;
   glm::mat4 m_rotate = glm::mat4(1.0f);
   glm::mat4 m_scale = glm::mat4(1.0f);
   glm::mat4 m_translate = glm::mat4(1.0f);
+  glm::vec3 m_color = glm::vec3(1.0f, 1.0f, 1.0f);
+
+  // Use the same shader for squares
+  static std::shared_ptr<Shader> s_shader;
+
+  // Reuse VAO and VBO for different squares
+  static GLuint m_vao, m_vbo, m_ebo;
+  static GLint s_modelMatLoc;
+  static GLint s_colorLoc;
 };
