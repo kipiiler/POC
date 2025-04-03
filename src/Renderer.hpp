@@ -9,6 +9,7 @@
 #include <iostream>
 
 #include "Shader.hpp"
+#include "Square.hpp"
 
 class Renderer {
 public:
@@ -71,10 +72,15 @@ public:
   }
 
   void run() {
+    Shader shader("./src/shaders/simple.vert.glsl", "./src/shaders/simple.frag.glsl");
 
-    Shader shader("./src/shaders/simple.vs", "./src/shaders/simple.fs");
-    GLint modelMatLoc = glGetUniformLocation(shader.shaderProgram, "uModelMat");
     glm::mat4 rot(1.0f);
+    GLint modelMatLoc = glGetUniformLocation(shader.shaderProgram, "uModelMat");
+    GLint colLoc = glGetUniformLocation(shader.shaderProgram, "uCol");
+    Square square;
+    square.Scale({0.25f, 0.25f, 0.25f});
+    square.Translate({0.5f, 0.5f, 0.0f});
+
     double dt;
     std::chrono::steady_clock::time_point prev =
         std::chrono::steady_clock::now();
@@ -90,19 +96,32 @@ public:
               .count();
 
       if (dt >= 160) { // 6 FPS
+        shader.use(); // Use the shader program
+
+        // Update model matrix for triangle
         rot = glm::rotate(rot, glm::pi<float>() / 60, {0.0, 0.0, 1.0});
-        glUniformMatrix4fv(modelMatLoc, 1, GL_FALSE, glm::value_ptr(rot));
-        prev = now;
+        square.Rotate(glm::pi<float>() / 30);
 
         // Render here
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set clear color to black
         glClear(GL_COLOR_BUFFER_BIT |
                 GL_DEPTH_BUFFER_BIT); // Clear the color buffer
 
-        shader.use(); // Use the shader program
+        // Model matrix for triangle
+        glUniformMatrix4fv(modelMatLoc, 1, GL_FALSE, glm::value_ptr(rot));
+        glUniform3f(colLoc, 0.7f, 0.1f, 0.3f);
         render();
 
+        // Render the square
+        square.Bind();
+        glUniformMatrix4fv(modelMatLoc, 1, GL_FALSE, glm::value_ptr(square.GetModelMatrix()));
+        glUniform3f(colLoc, 0.1f, 0.2f, 0.8f);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        square.Unbind();
+
         glfwSwapBuffers(window); // Swap front and back buffers
+
+        prev = now;
       }
 
       glfwPollEvents(); // Poll for and process events
