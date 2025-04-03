@@ -72,14 +72,26 @@ public:
   }
 
   void run() {
-    Shader shader("./src/shaders/simple.vert.glsl", "./src/shaders/simple.frag.glsl");
+    Shader shader("./src/shaders/simple.vert.glsl",
+                  "./src/shaders/simple.frag.glsl");
 
     glm::mat4 rot(1.0f);
     GLint modelMatLoc = glGetUniformLocation(shader.shaderProgram, "uModelMat");
     GLint colLoc = glGetUniformLocation(shader.shaderProgram, "uCol");
     Square square;
-    square.Scale({0.25f, 0.25f, 0.25f});
+    square.Scale({0.25f, 0.25f, 1.0f});
     square.Translate({0.5f, 0.5f, 0.0f});
+
+    std::vector<std::shared_ptr<Square>> squares;
+
+    for (int i = 0; i < 5; i++) {
+      for (int j = 0; j < 5; j++) {
+        std::shared_ptr<Square> s = std::make_shared<Square>();
+        s->Scale({0.1f, 0.1f, 1.0f});
+        s->Translate({-1.0f + j * 0.4f + 0.2f, -1.0f + i * 0.4f + 0.2f, 0.0f});
+        squares.push_back(s);
+      }
+    }
 
     double dt;
     std::chrono::steady_clock::time_point prev =
@@ -96,7 +108,7 @@ public:
               .count();
 
       if (dt >= 160) { // 6 FPS
-        shader.use(); // Use the shader program
+        shader.use();  // Use the shader program
 
         // Update model matrix for triangle
         rot = glm::rotate(rot, glm::pi<float>() / 60, {0.0, 0.0, 1.0});
@@ -114,10 +126,20 @@ public:
 
         // Render the square
         square.Bind();
-        glUniformMatrix4fv(modelMatLoc, 1, GL_FALSE, glm::value_ptr(square.GetModelMatrix()));
+        glUniformMatrix4fv(modelMatLoc, 1, GL_FALSE,
+                           glm::value_ptr(square.GetModelMatrix()));
         glUniform3f(colLoc, 0.1f, 0.2f, 0.8f);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         square.Unbind();
+
+        for (auto &s : squares) {
+          s->Bind();
+          glUniformMatrix4fv(modelMatLoc, 1, GL_FALSE,
+                             glm::value_ptr(s->GetModelMatrix()));
+          glUniform3f(colLoc, 0.5f, 0.2f, 0.4f);
+          glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+          s->Unbind();
+        }
 
         glfwSwapBuffers(window); // Swap front and back buffers
 
