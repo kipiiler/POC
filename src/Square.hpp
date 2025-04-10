@@ -80,9 +80,8 @@ public:
   void Render() const {
     s_shader->Use();
     Bind();
-    glUniformMatrix4fv(s_modelMatLoc, 1, GL_FALSE,
-                       glm::value_ptr(GetModelMatrix()));
-    glUniform3fv(s_colorLoc, 1, glm::value_ptr(m_color));
+    s_shader->setUniformMat4f("uModelMat", GetModelMatrix());
+    s_shader->setUniformVec3f("uCol", m_color);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     Unbind();
   }
