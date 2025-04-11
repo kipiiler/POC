@@ -11,7 +11,8 @@
 class TextureSquare {
 public:
     TextureSquare(const std::string& texture_path) {
-        m_texture = std::make_shared<Texture>(texture_path);
+        // Load the texture
+        m_texture = Texture::Load(texture_path);
 
         if(!s_shader) {
             s_shader = std::make_shared<Shader>("./src/shaders/texture_square.vert",

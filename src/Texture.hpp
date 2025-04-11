@@ -2,11 +2,42 @@
 #include <string>
 #include <glad/glad.h>
 #include <stb_image.h>
+#include <unordered_map>
+#include <memory>
+#include <mutex>
 #include <iostream>
 
 class Texture {
 public:
-    Texture(const std::string& imagePath) {
+    // Load or fetch a cached texture
+    static std::shared_ptr<Texture> Load(const std::string& imagePath) {
+        std::lock_guard<std::mutex> lock(mutex_);
+        auto it = textureCache_.find(imagePath);
+        if (it != textureCache_.end()) {
+            return it->second;
+        }
+
+        auto tex = std::shared_ptr<Texture>(new Texture(imagePath));
+        textureCache_[imagePath] = tex;
+        return tex;
+    }
+
+    ~Texture() {
+        glDeleteTextures(1, &textureID);
+    }
+
+    void Bind() const {
+        glBindTexture(GL_TEXTURE_2D, textureID);
+    }
+
+    void Unbind() const {
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+private:
+    GLuint textureID;
+
+    explicit Texture(const std::string& imagePath) {
         glGenTextures(1, &textureID);
         glBindTexture(GL_TEXTURE_2D, textureID);
 
@@ -30,18 +61,8 @@ public:
         stbi_image_free(data);
     }
 
-    ~Texture() {
-        glDeleteTextures(1, &textureID);
-    }
 
-    void Bind() const {
-        glBindTexture(GL_TEXTURE_2D, textureID);
-    }
-
-    void Unbind() const {
-        glBindTexture(GL_TEXTURE_2D, 0);
-    }
-
-private:
-    GLuint textureID;
+    // Cache for loaded textures
+    static inline std::unordered_map<std::string, std::shared_ptr<Texture>> textureCache_;
+    static inline std::mutex mutex_;
 };
