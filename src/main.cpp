@@ -1,5 +1,5 @@
+#define STB_IMAGE_IMPLEMENTATION
 #include <iostream>
-
 #include "Renderer.hpp"
 
 int main() {

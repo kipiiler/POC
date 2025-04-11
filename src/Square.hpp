@@ -12,9 +12,6 @@ public:
     if (!s_shader) {
       s_shader = std::make_shared<Shader>("./src/shaders/simple.vert",
                                           "./src/shaders/simple.frag");
-      s_modelMatLoc =
-          glGetUniformLocation(s_shader->shaderProgram, "uModelMat");
-      s_colorLoc = glGetUniformLocation(s_shader->shaderProgram, "uCol");
 
       float vertices[] = {-1.0f, -1.0f, 1.0f, -1.0f, 1.0f,  1.0f,
                           1.0f,  1.0f,  1.0f, 1.0f,  -1.0f, 1.0f};
@@ -97,6 +94,4 @@ private:
 
   // Reuse VAO and VBO for different squares
   static GLuint m_vao, m_vbo, m_ebo;
-  static GLint s_modelMatLoc;
-  static GLint s_colorLoc;
 };

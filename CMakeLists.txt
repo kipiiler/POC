@@ -10,6 +10,8 @@ set(SOURCES
     src/main.cpp
     src/Square.cpp
     src/Shader.cpp
+    src/Texture.cpp
+    src/TextureSquare.cpp
 )
 
 add_executable(POC ${SOURCES})
