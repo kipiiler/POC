@@ -27,7 +27,7 @@ public:
         if ((i * 5 + j) % 2 == 0) {
             texture_path = "./src/textures/red.jpg";
         }
-        std::shared_ptr<TextureSquare> s = std::make_shared<TextureSquare>(texture_path);
+        std::shared_ptr<TextureSquare> s = std::make_shared<TextureSquare>();
         s->Scale({0.2f, 0.2f, 1.0f});
         s->Translate({-1.0f + j * 0.4f + 0.2f, -1.0f + i * 0.4f + 0.2f, 0.0f});
         m_squares.push_back(s);

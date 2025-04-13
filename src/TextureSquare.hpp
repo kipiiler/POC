@@ -10,6 +10,8 @@
 
 class TextureSquare {
 public:
+    TextureSquare() : TextureSquare("./src/textures/wall.jpg") {};// Default constructor loads a white texture
+
     TextureSquare(const std::string& texture_path) {
         // Load the texture
         m_texture = Texture::Load(texture_path);
@@ -59,6 +61,10 @@ public:
         if (m_texture) {
             m_texture->Unbind();
         }
+    };
+
+    void LoadTexture(const std::string& texture_path) {
+        m_texture = Texture::Load(texture_path);
     };
 
     void Bind() const {
