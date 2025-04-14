@@ -28,28 +28,21 @@ class Scene {
 
     for (int i = 0; i < 5; i++) {
       for (int j = 0; j < 5; j++) {
-        // std::shared_ptr<Square> s = std::make_shared<Square>();
-        // s->Scale({0.2f, 0.2f, 1.0f});
-        // s->Translate({-1.0f + j * 0.4f + 0.2f, -1.0f + i * 0.4f + 0.2f,
-        // 0.0f}); s->SetColor({0.0f + i * 0.2f, 0.3f, 1.0f - j * 0.2f});
-        // m_squares.push_back(s);
         std::string texture_path = "./src/textures/wall.jpg";
         if ((i * 5 + j) % 2 == 0) {
           texture_path = "./src/textures/red.jpg";
         }
         std::shared_ptr<TextureSquare> s = std::make_shared<TextureSquare>();
-        s->Scale({50.2f, 50.2f, 0.1f});
-        s->Translate({i * 110.0f, j * 110.0f, 0.0f});
-        // s->Translate({-1.0f + j * 0.4f + 0.2f, -1.0f + i * 0.4f + 0.2f,
-        // 0.0f});
+        s->Scale({50.2f, 50.2f, 0.0f});
+        s->Translate({i * 110.0f, j * 110.0f, -1.0f});
         m_squares.push_back(s);
       }
     }
 
     std::shared_ptr<TextureSquare> s =
-        std::make_shared<TextureSquare>("./src/textures/red.jpg");
-    s->Scale({50.2f, 50.2f, 0.1f});
-    s->Translate({460.0f, 460.0f, -10.0f});
+        std::make_shared<TextureSquare>("./src/textures/flip.jpg");
+    s->Scale({50.2f, 50.2f, 0.0f});
+    s->Translate({460.0f, 460.0f, 10.f});
 
     m_squares.push_back(s);
 

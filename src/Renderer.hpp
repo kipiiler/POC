@@ -39,6 +39,9 @@ class Renderer {
       throw std::runtime_error("GLAD initialization failed");
     }
 
+    // config OpenGL options
+    glEnable(GL_DEPTH_TEST);  // Enable depth testing for 3D rendering
+
     m_scene.Init();
   };
 

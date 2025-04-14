@@ -26,15 +26,15 @@ class Camera {
   float m_far;
 
   Camera()
-      : m_cam_position(0.0f, 0.0f, 10.0f),
+      : m_cam_position(0.0f, 0.0f, 100.0f),
         m_cam_front(0.0f, 0.0f, -1.0f),
         m_cam_up(0.0f, 1.0f, 0.0f),
         m_left(0.0f),
         m_right(800.0f),
         m_bottom(600.0f),
         m_top(0.0f),
-        m_near(-1.0f),
-        m_far(100.0f) {};
+        m_near(0.0f),
+        m_far(1000.0f) {};
 
   ~Camera() {
     // Cleanup code here if needed
@@ -74,6 +74,5 @@ class Camera {
 
   glm::mat4 GetProjectionMatrix() const {
     return glm::ortho(m_left, m_right, m_bottom, m_top, m_near, m_far);
-    // return glm::ortho(0.0f, 800.0f, 600.0f, 0.0f, -1.0f, 100.0f);
   };
 };  // camera class
