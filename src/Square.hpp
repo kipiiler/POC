@@ -1,13 +1,15 @@
 #pragma once
-#include "Shader.hpp"
 #include <glad/glad.h>
+
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <memory>
 
+#include "Shader.hpp"
+
 class Square {
-public:
+ public:
   Square() {
     if (!s_shader) {
       s_shader = std::make_shared<Shader>("./src/shaders/simple.vert",
@@ -83,7 +85,7 @@ public:
     Unbind();
   }
 
-private:
+ private:
   glm::mat4 m_rotate = glm::mat4(1.0f);
   glm::mat4 m_scale = glm::mat4(1.0f);
   glm::mat4 m_translate = glm::mat4(1.0f);
