@@ -9,6 +9,7 @@
 
 #include "Shader.hpp"
 #include "Texture.hpp"
+#include "Utils.hpp"
 
 class TextureSquare {
  public:
@@ -21,8 +22,8 @@ class TextureSquare {
     m_texture = Texture::Load(texture_path);
 
     if (!s_shader) {
-      s_shader = std::make_shared<Shader>("./src/shaders/texture_square.vert",
-                                          "./src/shaders/texture_square.frag");
+      s_shader = std::make_shared<Shader>("./src/shaders/default.vert",
+                                          "./src/shaders/default.frag");
 
       float vertices[] = {
           -1.0f, -1.0f, 1.0f, 0.0f, 0.0f,  // bottom-left
@@ -98,10 +99,13 @@ class TextureSquare {
     return m_translate * m_rotate * m_scale;
   };
 
-  void Render() const {
+  void Render(glm::mat4 viewMat, glm::mat4 prjMat) const {
     s_shader->Use();
     m_texture->Bind();
     s_shader->setUniformMat4f("uModelMat", GetModelMatrix());
+    s_shader->setUniformMat4f("uViewMat", viewMat);
+    s_shader->setUniformMat4f("uProjMat", prjMat);
+
     glBindVertexArray(s_vao);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);

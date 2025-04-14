@@ -1,3 +1,4 @@
+#pragma once
 #include "TextureSquare.hpp"
 
 std::shared_ptr<Shader> TextureSquare::s_shader = nullptr;
