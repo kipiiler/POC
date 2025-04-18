@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Source files
 set(SOURCES
     src/main.cpp
+    src/Renderer.cpp
     src/Square.cpp
     src/Shader.cpp
     src/Texture.cpp

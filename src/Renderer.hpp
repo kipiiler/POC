@@ -3,6 +3,8 @@
 #include <glfw/glfw3.h>
 
 #include <chrono>
+#include <format>
+#include <functional>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/scalar_constants.hpp>
 #include <glm/glm.hpp>
@@ -14,93 +16,47 @@
 
 class Renderer {
  public:
-  Renderer(const int &w, const int &h) : width(w), height(h) {
-    // Initialize OpenGL context and other setup here
-    // Initialize GLFW
-    if (!glfwInit()) {
-      std::cerr << "Failed to initialize GLFW" << std::endl;
-      throw std::runtime_error("GLFW initialization failed");
-    }
+  Renderer(const int &w, const int &h);
 
-    // Create a windowed mode window and its OpenGL context
-    window = glfwCreateWindow(width, height, "OpenGL Window", NULL, NULL);
-    if (!window) {
-      std::cerr << "Failed to create GLFW window" << std::endl;
-      glfwTerminate();
-      throw std::runtime_error("GLFW window creation failed");
-    }
+  // Cleanup code here
+  ~Renderer() { CleanUp(); }
 
-    // Make the window's context current
-    glfwMakeContextCurrent(window);
+  void Run();
 
-    // Initialize GLAD
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-      std::cerr << "Failed to initialize GLAD" << std::endl;
-      throw std::runtime_error("GLAD initialization failed");
-    }
+  void Render() { m_scene.Render(); }
 
-    // config OpenGL options
-    glEnable(GL_DEPTH_TEST);  // Enable depth testing for 3D rendering
-
-    m_scene.Init();
-  };
-
-  ~Renderer() {
+  void CleanUp() {
     // Cleanup code here
-    cleanup();
-  }
-
-  void run() {
-    std::chrono::steady_clock::time_point prev =
-        std::chrono::steady_clock::now();
-
-    // Main loop
-    while (!glfwWindowShouldClose(window)) {
-      std::chrono::steady_clock::time_point now =
-          std::chrono::steady_clock::now();
-
-      // Elapsed time since last frame in milisecond
-      long long dt =
-          std::chrono::duration_cast<std::chrono::milliseconds>(now - prev)
-              .count();
-
-      if (dt >= 160) {  // 6 FPS
-        // Render here
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);  // Set clear color to black
-        glClear(GL_COLOR_BUFFER_BIT |
-                GL_DEPTH_BUFFER_BIT);  // Clear the color buffer
-
-        Render();
-
-        glfwSwapBuffers(window);  // Swap front and back buffers
-
-        prev = now;
-      }
-
-      glfwPollEvents();  // Poll for and process events
-    }
-  }
-
-  void Render() {
-    // Render the triangle
-    // renderTriangle();
-
-    m_scene.Render();
-  }
-
-  void cleanup() {
-    // Cleanup code here
-    glfwDestroyWindow(window);
+    glfwDestroyWindow(m_window);
     glfwTerminate();
   }
 
+ private: // Callback handler functions
+  static void GLAPIENTRY DebugOutputCallback(GLenum source, GLenum type,
+                                             unsigned int id, GLenum severity,
+                                             GLsizei length,
+                                             const char *message,
+                                             const void *userParam);
+
+  void HandleDebugMessage(GLenum source, GLenum type, unsigned int id,
+                          GLenum severity, GLsizei length, const char *message);
+
+  static void FrameBufferSizeCallback(GLFWwindow *window, int width,
+                                      int height);
+
+  void HandleFrameBufferSize(int width, int height);
+
+  static void HandleGLFWError(int error, const char* description);
+
  private:
-  int width, height;
-  GLFWwindow *window;
-  GLuint tri_VAO, tri_VBO;
+  int m_width, m_height;
+  GLFWwindow *m_window;
 
   // Shader *shader;
   std::vector<std::shared_ptr<Square>> squares;
 
   Scene m_scene;
+
+ private:
+  bool m_debug = true;
 };  // Renderer

@@ -14,8 +14,7 @@
 class TextureSquare {
  public:
   TextureSquare()
-      : TextureSquare("./src/textures/wall.jpg") {
-        };  // Default constructor loads a white texture
+      : TextureSquare("./src/textures/wall.jpg") {}; // Default constructor loads a white texture
 
   TextureSquare(const std::string &texture_path) {
     // Load the texture
@@ -99,17 +98,21 @@ class TextureSquare {
     return m_translate * m_rotate * m_scale;
   };
 
-  void Render(glm::mat4 viewMat, glm::mat4 prjMat) const {
+  void Render() const {
     s_shader->Use();
     m_texture->Bind();
     s_shader->setUniformMat4f("uModelMat", GetModelMatrix());
-    s_shader->setUniformMat4f("uViewMat", viewMat);
-    s_shader->setUniformMat4f("uProjMat", prjMat);
 
     glBindVertexArray(s_vao);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
   };
+
+  static void SetViewProjectionMatrices(const glm::mat4& view, const glm::mat4& proj) {
+    s_shader->Use();
+    s_shader->setUniformMat4f("uViewMat", view);
+    s_shader->setUniformMat4f("uProjMat", proj);
+  }
 
  private:
   glm::mat4 m_rotate = glm::mat4(1.0f);
