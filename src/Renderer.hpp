@@ -10,11 +10,14 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
+#include <memory>
 
 #include "Scene.hpp"
 #include "Square.hpp"
 
 class Renderer {
+  using KeyHandler = std::function<void(int key, int action, int mods)>;
+
  public:
   Renderer(const int &w, const int &h);
 
@@ -31,7 +34,15 @@ class Renderer {
     glfwTerminate();
   }
 
- private: // Callback handler functions
+  void AddHandler(KeyHandler handler) { m_handlers.push_back(handler); }
+
+ private:
+  static void KeyCallback(GLFWwindow *window, int key, int scancode, int action,
+                          int mods);
+
+  void HandleKey(int key, int scancode, int action, int mods);
+
+ private:  // Callback handler functions
   static void GLAPIENTRY DebugOutputCallback(GLenum source, GLenum type,
                                              unsigned int id, GLenum severity,
                                              GLsizei length,
@@ -46,16 +57,18 @@ class Renderer {
 
   void HandleFrameBufferSize(int width, int height);
 
-  static void HandleGLFWError(int error, const char* description);
+  static void HandleGLFWError(int error, const char *description);
 
  private:
   int m_width, m_height;
   GLFWwindow *m_window;
 
-  // Shader *shader;
-  std::vector<std::shared_ptr<Square>> squares;
-
   Scene m_scene;
+
+ private:  // Input section
+  GLFWkeyfun m_prevKeyCallback = nullptr;
+
+  std::vector<KeyHandler> m_handlers;
 
  private:
   bool m_debug = true;

@@ -2,6 +2,8 @@
 
 #include <GLFW/glfw3.h>
 
+#include <memory>
+
 Renderer::Renderer(const int &w, const int &h) : m_width(w), m_height(h) {
   // Initialize OpenGL context and other setup here
   // Initialize GLFW
@@ -50,6 +52,8 @@ Renderer::Renderer(const int &w, const int &h) : m_width(w), m_height(h) {
   // Window size callback
   glfwSetFramebufferSizeCallback(m_window, &Renderer::FrameBufferSizeCallback);
 
+  m_prevKeyCallback = glfwSetKeyCallback(m_window, &Renderer::KeyCallback);
+
   // Initialize GLAD
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
     std::cout << "[Error]: Failed to initialize GLAD" << std::endl;
@@ -80,6 +84,14 @@ Renderer::Renderer(const int &w, const int &h) : m_width(w), m_height(h) {
   }
 
   m_scene.Init();
+
+  using namespace std::placeholders;
+  AddHandler(std::bind(&Scene::HandleKey, &m_scene, _1, _2, _3));
+  AddHandler([&](int key, int action, int mods) {
+    if (key == GLFW_KEY_ESCAPE and action == GLFW_PRESS) {
+      glfwSetWindowShouldClose(m_window, true);
+    }
+  });
 }
 
 void Renderer::Run() {
@@ -98,7 +110,7 @@ void Renderer::Run() {
     if (dt >= 160) {  // 6 FPS
       // Render here
       glClearColor(0.0f, 0.0f, 0.0f, 1.0f);  // Set clear color to black
-      glClear(GL_COLOR_BUFFER_BIT);  // Clear the color buffer
+      glClear(GL_COLOR_BUFFER_BIT);          // Clear the color buffer
 
       Render();
 
@@ -225,4 +237,22 @@ void Renderer::HandleFrameBufferSize(int width, int height) {
 
 void Renderer::HandleGLFWError(int error, const char *description) {
   std::cout << "[Error]: GLFW (" << error << "): " << description << std::endl;
+}
+
+void Renderer::KeyCallback(GLFWwindow *window, int key, int scancode, int action,
+                        int mods) {
+  Renderer *_this = static_cast<Renderer *>(glfwGetWindowUserPointer(window));
+  if (_this) {
+    _this->HandleKey(key, scancode, action, mods);
+  }
+}
+
+void Renderer::HandleKey(int key, int scancode, int action, int mods) {
+  if (m_prevKeyCallback != nullptr)
+    m_prevKeyCallback(m_window, key, scancode, action, mods);
+
+  for (auto &handler : m_handlers) {
+    std::cout << key << std::endl;
+    handler(key, action, mods);
+  }
 }

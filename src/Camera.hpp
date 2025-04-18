@@ -4,12 +4,6 @@
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <memory>
-#include <string>
-#include <vector>
-
-#include "Shader.hpp"
-#include "Texture.hpp"
 
 class Camera {
  public:
@@ -68,11 +62,11 @@ class Camera {
     m_far = far;
   };
 
-  glm::mat4 GetViewMatrix() const {
+  [[nodiscard]] glm::mat4 GetViewMatrix() const {
     return glm::lookAt(m_cam_position, m_cam_position + m_cam_front, m_cam_up);
   };
 
-  glm::mat4 GetProjectionMatrix() const {
+  [[nodiscard]] glm::mat4 GetProjectionMatrix() const {
     return glm::ortho(m_left, m_right, m_bottom, m_top, m_near, m_far);
   };
 };  // camera class
