@@ -62,30 +62,34 @@ class Scene {
   }
 
   void HandleKey(int key, int action, int mods) {
-    std::cout << key << std::endl;
     if (key == GLFW_KEY_W and (action == GLFW_PRESS or action == GLFW_REPEAT)) {
       glm::vec3 t{0.0f, 1.0f, 0.0f};
-      // m_camera->SetPosition(m_camera->m_cam_position + t);
+      m_camera->SetPosition(m_camera->m_cam_position + t);
       m_s->Translate(t);
     }
 
     if (key == GLFW_KEY_A and (action == GLFW_PRESS or action == GLFW_REPEAT)) {
       glm::vec3 t{-1.0f, 0.0f, 0.0f};
-      // m_camera->SetPosition(m_camera->m_cam_position + t);
+      m_camera->SetPosition(m_camera->m_cam_position + t);
       m_s->Translate(t);
     }
 
     if (key == GLFW_KEY_S and (action == GLFW_PRESS or action == GLFW_REPEAT)) {
       glm::vec3 t{0.0f, -1.0f, 0.0f};
-      // m_camera->SetPosition(m_camera->m_cam_position + t);
+      m_camera->SetPosition(m_camera->m_cam_position + t);
       m_s->Translate(t);
     }
 
     if (key == GLFW_KEY_D and (action == GLFW_PRESS or action == GLFW_REPEAT)) {
       glm::vec3 t{1.0f, 0.0f, 0.0f};
-      // m_camera->SetPosition(m_camera->m_cam_position + t);
+      m_camera->SetPosition(m_camera->m_cam_position + t);
       m_s->Translate(t);
     }
+  }
+
+  void HandleFrameBufferSize(int width, int height) {
+    m_camera->SetTop(height);
+    m_camera->SetRight(width);
   }
 
  public:

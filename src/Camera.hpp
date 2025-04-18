@@ -25,8 +25,8 @@ class Camera {
         m_cam_up(0.0f, 1.0f, 0.0f),
         m_left(0.0f),
         m_right(800.0f),
-        m_bottom(600.0f),
-        m_top(0.0f),
+        m_bottom(0.0f),
+        m_top(600.0f),
         m_near(0.0f),
         m_far(1000.0f) {};
 

@@ -231,6 +231,8 @@ void Renderer::HandleFrameBufferSize(int width, int height) {
   std::cout << "[Info]: Window size: (" << width << ", " << height << ")"
             << std::endl;
 
+  m_scene.HandleFrameBufferSize(width, height);
+
   // Reset the opengl viewport with the new dimension
   glViewport(0, 0, width, height);
 }
@@ -252,7 +254,6 @@ void Renderer::HandleKey(int key, int scancode, int action, int mods) {
     m_prevKeyCallback(m_window, key, scancode, action, mods);
 
   for (auto &handler : m_handlers) {
-    std::cout << key << std::endl;
     handler(key, action, mods);
   }
 }

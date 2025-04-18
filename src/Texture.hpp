@@ -53,7 +53,7 @@ class Texture {
                    GL_UNSIGNED_BYTE, data);
       glGenerateMipmap(GL_TEXTURE_2D);
     } else {
-      std::cerr << "Failed to load texture: " << imagePath << std::endl;
+      std::cerr << "[Error]: Failed to load texture: " << imagePath << std::endl;
     }
     stbi_image_free(data);
   }
