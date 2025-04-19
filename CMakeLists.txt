@@ -26,3 +26,5 @@ target_link_libraries(POC PRIVATE
     glad::glad
     glm::glm
 )
+
+add_subdirectory("./docs/")

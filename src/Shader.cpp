@@ -1,5 +1,3 @@
-#pragma once
-
 #include "Shader.hpp"
 
 Shader::Shader(const char *vertexPath, const char *fragmentPath) {
